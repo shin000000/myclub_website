@@ -1,0 +1,59 @@
+{% extends 'events/base.html' %}
+
+
+
+{% block content %}
+	<title>event list</title>
+
+<h1>Events</h1>
+<br/>
+
+<form class="btn-group">
+  <button class="btn btn-secondary btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Sort By
+  </button>
+  <ul class="dropdown-menu">
+    <li><a href="?order=name"class="dropdown-item">A-Z</a></li>
+    <li><a href="?order=event_date" class="dropdown-item">DATE</a></li>
+  </ul>
+</form>
+<br/><br/>
+
+
+
+{% for event in event_list %}
+
+<div class="card">
+  <div class="card-header">
+    <strong>{{ event }}</strong>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">
+    	<strong>Venue: </strong>{{ event.venue }}
+    </h5>
+    <p class="card-text">
+			<strong>Date: </strong>{{ event.event_date }}<br/>
+			<strong>Venue: </strong>{{ event.venue }}<br/>
+			<strong>Venue Website: </strong>{{ event.venue.web }}<br/>
+			<strong>Manager: </strong>{{ event.manager }}<br/>
+			<strong>Description: </strong>{{ event.description }}<br/>
+			<strong>Attendees: </strong>{% for user in event.attendees.all %}
+			{{ user }} | {% endfor %}
+    </p>
+    
+  </div>
+  <div class="card-footer">
+    <a href="{% url 'update-event' event.id %}"
+			class="btn btn-outline-secondary btn-sm" >Update Event</a>
+  	<a href="{% url 'delete-event' event.id %}"
+			class="btn btn-outline-danger btn-sm" >Delete Event</a>
+
+  </div>
+    
+
+</div>
+<br/>
+{% endfor %}	
+
+
+{% endblock %}

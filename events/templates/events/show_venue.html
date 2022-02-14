@@ -1,0 +1,42 @@
+{% extends 'events/base.html' %}
+
+
+
+{% block content %}
+
+
+<div class="card">
+		<div class="card-header">
+	    <h4><strong>{{ venue }}</strong>
+			&emsp;
+				<a href="" class="link-secondary">
+					<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16" >
+			  	<path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+			  </a>
+			</h4>
+  	</div>
+  <div class="card-body">
+    <h5 class="card-title">
+    	<strong>{{ Venue }} </strong> 
+    </h5>
+    <p class="card-text">
+    	<ul>
+			<li><strong>Address: </strong>{{ venue.address }}</li>
+			<li><strong>Zip Code: </strong>{{ venue.zip_code }}</li>
+			<li><strong>Phone: </strong>{{ venue.phone }}</li>
+			<li><strong>Email Address: </strong>{{ venue.email_address }}</li>
+			<li><strong>Website: </strong><a href="{{ venue.web }}" class="link-secondary">{{ venue.web }}</a></li>
+			<br/>
+		<ul>
+    </p>
+  </div>
+  <div class="card-footer">
+    <a href="{% url 'update-venue' venue.id %}"
+			class="btn btn-outline-secondary btn-sm" >Update Venue</a>
+  	<a href="{% url 'delete-venue' venue.id %}"
+			class="btn btn-outline-danger btn-sm" >Delete Venue</a>
+
+  </div>
+</div>
+
+{% endblock %}
