@@ -26,17 +26,18 @@
 			<li><strong>Phone: </strong>{{ venue.phone }}</li>
 			<li><strong>Email Address: </strong>{{ venue.email_address }}</li>
 			<li><strong>Website: </strong><a href="{{ venue.web }}" class="link-secondary">{{ venue.web }}</a></li>
-			<br/>
+			<li><strong>Owner: </strong>{{ venue_owner }}</li>
 		<ul>
     </p>
   </div>
+ {% if user.is_authenticated %}
   <div class="card-footer">
     <a href="{% url 'update-venue' venue.id %}"
 			class="btn btn-outline-secondary btn-sm" >Update Venue</a>
   	<a href="{% url 'delete-venue' venue.id %}"
 			class="btn btn-outline-danger btn-sm" >Delete Venue</a>
-
   </div>
+ {% endif %}
 </div>
 
 {% endblock %}

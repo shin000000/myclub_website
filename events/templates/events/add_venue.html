@@ -4,10 +4,10 @@
 
 {% block content %}
 
-<body>
+{% if user.is_authenticated %}
 	
 	<h1>Add Venue To Database</h1>
-	<br/>
+	<br/><br/>ID: {{ user.id }}
 	{% if submitted %}
 		Your Venue Was Submitted 
 		Successfully!
@@ -20,6 +20,10 @@
 		</form>
 	{% endif %}
 	
+{% else %}
+	<h1>Sorry, you must be logged in to view this page...</h1>
+	<br/><br/>
+	<a href="{% url 'login' %}">Login Here</a>
+{% endif %}
 
-</body>
 {% endblock %}
