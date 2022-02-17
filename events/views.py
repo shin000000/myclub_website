@@ -21,6 +21,84 @@ from reportlab.lib.pagesizes import letter
 from django.core.paginator import Paginator
 
 
+# show event
+def show_event(request, event_id):
+	event = Event.objects.get(pk=event_id)
+	return render(request, 'events/show_event.html',{
+		"event": event,
+		})
+
+
+# show event in a venue
+def venue_events(request, venue_id):
+	#grab the venue
+	venue = Venue.objects.get(id=venue_id)
+	#grab the events from that venue
+	events = venue.event_set.all()
+	if events:
+		return render(request, 'events/venue_events.html', {
+			'events': events
+			})
+	else:
+		messages.success(request, ("That Venue Has No Events at This Time! "))
+		return redirect('admin-approval')
+
+
+def admin_approval(request):
+	# Get the venues
+	venue_list = Venue.objects.all()
+	# get counts
+	event_count = Event.objects.all().count()
+	venue_count = Venue.objects.all().count()
+	user_count = User.objects.all().count()
+	event_list = Event.objects.all().order_by('-event_date')
+	if request.user.is_superuser:
+		if request.method == "POST":
+			id_list = request.POST.getlist('boxes')
+
+			event_list.update(approved=False)
+			# Update the datebase
+			for x in id_list:
+				Event.objects.filter(pk=int(x)).update(approved=True)
+
+			messages.success(request, ("Event list approval has been updated! "))
+			return redirect('list-events')
+		else:
+			return render(request, 'events/admin_approval.html', 
+				{'event_list': event_list,
+				'event_count': event_count,
+				'venue_count': venue_count,
+				'user_count': user_count,
+				'venue_list': venue_list,
+				})
+	else:
+		messages.success(request, ("You are not authrized to view this page! "))
+		return redirect('home')
+
+	return render(request, 'events/admin_approval.html')
+
+
+def search_events(request):
+	if request.method == "POST":
+		searched = request.POST['searched']
+		events = Event.objects.filter(name__contains=searched)
+		return render(request, 'events/search_events.html', 
+			{'searched': searched, 'events': events})
+	else:
+		return render(request, 'events/search_events.html', {})
+
+
+def my_events(request):
+	if request.user.is_authenticated:
+		me = request.user.id
+		events = Event.objects.filter(attendees=me)
+		return render(request, 'events/my_events.html', {
+				'events': events, 
+			})
+	else:
+		messages.success(request, ('You are not authrized to view this page! '))
+		return redirect('home')
+
 
 # generate a pdf file venue list
 def event_pdf(request):
@@ -249,7 +327,7 @@ def add_event(request):
 
 def update_venue(request, venue_id):
 	venue = Venue.objects.get(pk=venue_id)
-	form = VenueForm(request.POST or None, instance=venue)
+	form = VenueForm(request.POST or None, request.FILES or None, instance=venue)
 	if form.is_valid():
 		form.save()
 		return redirect('list-venues')
@@ -263,7 +341,9 @@ def search_venues(request):
 		searched = request.POST['searched']
 		venues = Venue.objects.filter(name__contains=searched)
 		return render(request, 'events/search_venues.html', 
-			{'searched': searched, 'venues': venues})
+			{'searched': searched, 
+			'venues': venues, 
+			})
 	else:
 		return render(request, 'events/search_venues.html', {})
 
@@ -297,7 +377,7 @@ def list_venues(request):
 def add_venue(request):
 	submitted = False
 	if request.method == "POST":
-		form = VenueForm(request.POST)
+		form = VenueForm(request.POST, request.FILES)
 		if form.is_valid():
 			venue = form.save(commit=False)
 			venue.owner = request.user.id #logged in user id
@@ -332,10 +412,16 @@ def home(request, year=datetime.now().year, month=datetime.now().strftime('%B'))
 	month_number = int(month_number)
 
 	# create a Calendar
-	cal = HTMLCalendar().formatmonth(year, month_number)
+	cal = HTMLCalendar().formatmonth(
+		year, 
+		month_number)
 	# get current year
 	now = datetime.now()
 	current_year = now.year
+
+	event_list = Event.objects.filter(
+		event_date__year = year,
+		event_date__month = month_number)
 
 	# get current time
 	time = now.strftime('%I:%M:%S %p')
@@ -348,6 +434,7 @@ def home(request, year=datetime.now().year, month=datetime.now().strftime('%B'))
 		"cal": cal,
 		"current_year": current_year,
 		"time": time,
+		'event_list': event_list,
 		})
 
 

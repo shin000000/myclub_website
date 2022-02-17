@@ -4,11 +4,32 @@
 
 {% block content %}
 
+<div class="card">
+	<div class="card-header">
+		{% if searched %}
+			<h2>You searched for {{ searched }}</h2>
+		{% else %}
+			<h1>Search for a event...</h1>	
+		{% endif %}
+	</div>
+	<div class="card-body">
+		<form method=POST action="{% url 'search-events' %}">
+		{% csrf_token %}
+		<input class="form-control me-2" type="search" placeholder="Search Events" aria-label="
+		Search" name="searched">
+		<br/>
+		<button class="btn btn-outline-secondary" type="submit">Search</button>
+		</form>	    
+	</div>
+</div>
 
-<h2>My Events</h2>
-<br/>
-{% for event in events %}
+<br/><br/>
 	
+
+<br/>
+
+{% for event in events %}
+
 	<div class="card">
 	  <div class="card-header">
 	    <strong>{{ event }}</strong>&emsp;
@@ -46,6 +67,11 @@
 
 	</div>
 	<br/>
+
 {% endfor %}
+		
+
+<br/><br/><br/><br/>
+Copyright (c) {{ current_year }}
 
 {% endblock %}

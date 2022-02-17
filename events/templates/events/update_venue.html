@@ -8,7 +8,7 @@
 
 	<h1>Update Venue</h1>
 	<br/>
-	<form aciton="" method=POST>
+	<form aciton="" method=POST enctype="multipart/form-data">
 		{% csrf_token %}
 		{{ form.as_p }}
 	<br/>
